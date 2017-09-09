@@ -6,14 +6,17 @@ import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
+import io.netty.util.internal.StringUtil;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 
@@ -36,13 +39,12 @@ public class Deployer {
         return singleton;
     }
 
-    public void deploy() {
+    public void deploy(JsonObject appConfig) {
 
 
-        JsonObject appConfig = VertxConfig.singleton().appConfig();
         LOGGER.info("deploy appConfig : {}", appConfig);
         VertxOptions vertxOptions = new VertxOptions(appConfig.getJsonObject("vertxOptions"));
-        JsonObject verticlesConfig = VertxConfig.singleton().verticlesConfig().getJsonObject("verticles");
+        JsonArray verticlesConfig = (JsonArray)VertxConfig.singleton().verticlesConfig().getValue("verticles");
 
         new VertxFactory()
             .create(vertxOptions)
@@ -50,28 +52,35 @@ public class Deployer {
             .subscribe(logSuccess, logError);
     }
 
-    private Observable<String> deployVerticles(Vertx vertx, JsonObject verticlesConfig) {
-        return Observable.fromIterable(verticlesConfig)
-            .flatMap(verticleConf -> deployVerticle(vertx, verticleConf));
+    private Observable<String> deployVerticles(Vertx vertx, JsonArray verticlesConfig) {
+        return Observable
+            .fromIterable(verticlesConfig)
+            .flatMap(verticleConf -> deployVerticle(vertx, (JsonObject)verticleConf));
     }
 
-    private Observable<String> deployVerticle(Vertx vertx, Map.Entry<String, Object> verticleConf) {
+    private Observable<String> deployVerticle(Vertx vertx, JsonObject verticleConf) {
 
-        JsonObject deploymentConf = ((JsonObject) verticleConf.getValue()).getJsonObject("deploymentOptions");
+        JsonObject deploymentConf = verticleConf.getJsonObject("deploymentOptions");
         DeploymentOptions deploymentOptions = new DeploymentOptions(deploymentConf);
 
         return Observable.fromPublisher(observer -> {
-            String className = verticleConf.getKey();
-            vertx.deployVerticle(className, deploymentOptions, result -> handleCompletion(observer, result));
+            String className = verticleConf.getString("class");
+            LOGGER.info("deploying verticle=[{}]", classShortName(className));
+
+            vertx.deployVerticle(className, deploymentOptions, result -> handleCompletion(observer, result, className));
         });
     }
 
-    private void handleCompletion(Subscriber<? super String> observer, AsyncResult<String> result) {
+    private void handleCompletion(Subscriber<? super String> observer, AsyncResult<String> result, String className) {
         if (result.succeeded()) {
-            observer.onNext(result.result());
+            observer.onNext("verticle=" + classShortName(className) + " : " + result.result());
         } else {
             observer.onError(result.cause());
         }
         observer.onComplete();
+    }
+
+    private String classShortName(String className) {
+        return StringUtil.substringAfter(className, '.');
     }
 }

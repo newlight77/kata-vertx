@@ -14,7 +14,9 @@ import javax.inject.Inject;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
 public class TodoVerticle extends AbstractVerticle {
@@ -27,17 +29,14 @@ public class TodoVerticle extends AbstractVerticle {
     public void start(Future<Void> future) throws Exception {
 
         Guice
-            .createInjector(new BinderModule(vertx))
+            .createInjector(new BinderModule())
             .injectMembers(this);
 
         JsonObject appConfig = VertxConfig.singleton().loadBeneathAppConfig(config()).appConfig();
 
-        final io.vertx.ext.web.Router router = io.vertx.ext.web.Router.router(vertx);
-        router.route().handler(BodyHandler.create());
+        final Router router = configureRouter(vertx);
 
-        router.get("/todos/:id").handler(context -> todoHandler.handleGetTodo(context));
-        router.put("/todos/:id").handler(context -> todoHandler.handleAddTodo(context));
-        router.get("/todos").handler(context -> todoHandler.handleListTodos(context));
+        LOGGER.info("starting verticle : {}", this.getClass().getSimpleName());
 
         vertx
             .createHttpServer()
@@ -54,6 +53,23 @@ public class TodoVerticle extends AbstractVerticle {
                         future.fail(result.cause());
                     }
                 });
+    }
+
+    private Router configureRouter(Vertx vertx) {
+
+        LOGGER.info("configureRouter for verticle : {}", this.getClass().getSimpleName());
+
+
+        final Router router = Router.router(vertx);
+        router.route().handler(BodyHandler.create());
+
+        router.post("/todos").handler(context -> todoHandler.handleCreateTodo(context));
+        router.put("/todos/:id").handler(context -> todoHandler.handleUpdateTodo(context));
+        router.delete("/todos/:id").handler(context -> todoHandler.handleDeleteTodo(context));
+        router.get("/todos/:id").handler(context -> todoHandler.handleFindTodo(context));
+        router.get("/todos").handler(context -> todoHandler.handleFindTodos(context));
+
+        return router;
     }
 
 }

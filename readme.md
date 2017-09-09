@@ -50,17 +50,20 @@ To embbed more verticles :
 
 ```
 {
-  "verticles" : {
-    "com.newlight77.demo.vertx.verticle.TodoVerticle": {
+{
+  "verticles" : [
+    {
+      "class" : "com.newlight77.demo.vertx.verticle.TodoVerticle",
       "deploymentOptions": {
         "config": {
-        }
-      },
-      "instances": 1,
-      "ha": true,
-      "worker": false,
-      "multiThreaded": false
+        },
+        "instances": 1,
+        "ha": true,
+        "worker": false,
+        "multiThreaded": false
+      }
     }
-  }
+  ]
+}
 }
 ```

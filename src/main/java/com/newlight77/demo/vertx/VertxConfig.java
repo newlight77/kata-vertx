@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class VertxConfig {
 
     private static Logger LOGGER = LoggerFactory.getLogger(VertxConfig.class);
+
     private static final String JVM_ARG_APP_CONFIG = "app-config";
     private static final String DEFAULT_CONFIG = "app-config.json";
     private static final String VERTICLES_CONFIG = "verticles-config.json";
@@ -53,11 +54,11 @@ public class VertxConfig {
 
     public VertxConfig loadBeneathAppConfig(JsonObject config) {
         if (config == null || config.isEmpty()) {
-            LOGGER.info("failed loading appConfig beneath current one : config={}", config);
+            LOGGER.warn("failed loading appConfig beneath current one : config={}", config);
             return this;
         }
 
-        LOGGER.info("loading appConfig beneath current one. appConfig from arg will be overridden. config={} appConfig={}", config, appConfig);
+        LOGGER.debug("loading appConfig beneath current one. appConfig from arg will be overridden. config={} appConfig={}", config, appConfig);
         this.appConfig = config.mergeIn(appConfig());
         LOGGER.info("merged appConfig : {}", appConfig);
         return this;

@@ -12,13 +12,6 @@ import io.vertx.core.json.JsonObject;
 
 public class BinderModule extends AbstractModule {
 
-    private final Vertx vertx;
-    private JsonObject configuration;
-
-    public BinderModule(Vertx vertx) {
-        this.vertx = vertx;
-    }
-
     @Override
     protected void configure() {
         bind(TodoService.class).in(Singleton.class);

@@ -1,6 +1,11 @@
 package com.newlight77.demo.vertx.service;
 
 
+import com.newlight77.demo.vertx.Deployer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +14,10 @@ import java.util.UUID;
 
 import io.vertx.core.json.JsonObject;
 
-public class TodoService
-{
+public class TodoService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(TodoService.class);
+
     private Map<String, JsonObject> todos = new HashMap<>();
 
     public TodoService() {
@@ -44,11 +51,10 @@ public class TodoService
         return todos.values();
     }
 
-
     public void initData() {
-        create(new JsonObject().put("name", "Egg Whisk").put("price", 3.99).put("weight", 150));
-        create(new JsonObject().put("name", "Tea Cosy").put("price", 5.99).put("weight", 100));
-        create(new JsonObject().put("name", "Spatula").put("price", 1.00).put("weight", 80));
+        create(new JsonObject().put("assigned", "Kong").put("title", "Learn vert.x").put("done", true));
+        create(new JsonObject().put("assigned", "Mr B").put("title", "Learn Angular").put("done", false));
+        create(new JsonObject().put("assigned", "Mr S").put("title", "Learn Kafka").put("done", false));
     }
 
 }

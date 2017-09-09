@@ -15,33 +15,25 @@ import io.vertx.ext.web.RoutingContext;
 
 public class TodoHandler {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(TodoHandler.class);
 
     @Inject
     private TodoService todoService;
 
-    public void addTodo(JsonObject todo) {
-        todoService.create(todo);
-    }
-
-    public void handleGetTodo(RoutingContext routingContext) {
-        LOGGER.info("handleGetTodo");
-        String id = routingContext.request().getParam("id");
+    public void handleCreateTodo(RoutingContext routingContext) {
+        LOGGER.info("handleCreateTodo with uri={}", routingContext.request().absoluteURI());
         HttpServerResponse response = routingContext.response();
-        if (id == null) {
+        JsonObject todo = routingContext.getBodyAsJson();
+        if (todo == null) {
             sendError(400, response);
         } else {
-            JsonObject todo = todoService.find(id);
-            if (todo == null) {
-                sendError(404, response);
-            } else {
-                response.putHeader("content-type", "application/json").end(todo.encodePrettily());
-            }
+            todoService.create(todo);
+            response.end();
         }
     }
 
-    public void handleAddTodo(RoutingContext routingContext) {
-        LOGGER.info("handleAddTodo");
+    public void handleUpdateTodo(RoutingContext routingContext) {
+        LOGGER.info("handleUpdateTodo with uri={}", routingContext.request().absoluteURI());
         String id = routingContext.request().getParam("id");
         HttpServerResponse response = routingContext.response();
         if (id == null) {
@@ -57,8 +49,36 @@ public class TodoHandler {
         }
     }
 
-    public void handleListTodos(RoutingContext routingContext) {
-        LOGGER.info("handleListTodos");
+    public void handleDeleteTodo(RoutingContext routingContext) {
+        LOGGER.info("handleDeleteTodo with uri={}", routingContext.request().absoluteURI());
+        String id = routingContext.request().getParam("id");
+        HttpServerResponse response = routingContext.response();
+        if (id == null) {
+            sendError(400, response);
+        } else {
+            todoService.delete(id);
+            response.end();
+        }
+    }
+
+    public void handleFindTodo(RoutingContext routingContext) {
+        LOGGER.info("handleFindTodo with uri={}", routingContext.request().absoluteURI());
+        String id = routingContext.request().getParam("id");
+        HttpServerResponse response = routingContext.response();
+        if (id == null) {
+            sendError(400, response);
+        } else {
+            JsonObject todo = todoService.find(id);
+            if (todo == null) {
+                sendError(404, response);
+            } else {
+                response.putHeader("content-type", "application/json").end(todo.encodePrettily());
+            }
+        }
+    }
+
+    public void handleFindTodos(RoutingContext routingContext) {
+        LOGGER.info("handleFindTodos with uri={}", routingContext.request().absoluteURI());
         JsonArray array = new JsonArray();
         todoService.find().forEach(value -> array.add(value));
         routingContext.response().putHeader("content-type", "application/json").end(array.encodePrettily());
