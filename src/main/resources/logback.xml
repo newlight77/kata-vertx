@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+
+  <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%highlight(%-5level)] %logger{32}:%L - %msg%n%throwable</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="consoleAppender"/>
+  </root>
+
+  <logger name="org.apache" level="WARN"></logger>
+  <logger name="io.netty" level="WARN"></logger>
+  <logger name="sun" level="WARN"></logger>
+  <logger name="cg.qos.logback" level="WARN"></logger>
+
+</configuration>
