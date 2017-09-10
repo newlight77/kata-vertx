@@ -3,6 +3,7 @@ package com.newlight77.demo.vertx;
 import com.google.inject.AbstractModule;
 
 import com.newlight77.demo.vertx.handler.TodoHandler;
+import com.newlight77.demo.vertx.router.TodoRouter;
 import com.newlight77.demo.vertx.service.TodoService;
 
 import javax.inject.Singleton;
@@ -16,6 +17,7 @@ public class BinderModule extends AbstractModule {
     protected void configure() {
         bind(TodoService.class).in(Singleton.class);
         bind(TodoHandler.class).in(Singleton.class);
+        bind(TodoRouter.class).in(Singleton.class);
 
     }
 }

@@ -30,7 +30,8 @@ public class Deployer {
 
     private static Deployer singleton;
 
-    private Deployer() {}
+    private Deployer() {
+    }
 
     public static Deployer singleton() {
         if (singleton == null) {
@@ -39,13 +40,9 @@ public class Deployer {
         return singleton;
     }
 
-    public void deploy(JsonObject appConfig) {
+    public void deploy(VertxOptions vertxOptions, JsonArray verticlesConfig) {
 
-
-        LOGGER.info("deploy appConfig : {}", appConfig);
-        VertxOptions vertxOptions = new VertxOptions(appConfig.getJsonObject("vertxOptions"));
-        JsonArray verticlesConfig = (JsonArray)VertxConfig.singleton().verticlesConfig().getValue("verticles");
-
+        LOGGER.info("deploying verticles");
         new VertxFactory()
             .create(vertxOptions)
             .flatMapObservable(vertx -> deployVerticles(vertx, verticlesConfig))
@@ -55,7 +52,7 @@ public class Deployer {
     private Observable<String> deployVerticles(Vertx vertx, JsonArray verticlesConfig) {
         return Observable
             .fromIterable(verticlesConfig)
-            .flatMap(verticleConf -> deployVerticle(vertx, (JsonObject)verticleConf));
+            .flatMap(verticleConf -> deployVerticle(vertx, (JsonObject) verticleConf));
     }
 
     private Observable<String> deployVerticle(Vertx vertx, JsonObject verticleConf) {
