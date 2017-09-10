@@ -10,6 +10,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import io.vertx.core.json.JsonObject;
 
@@ -20,10 +21,12 @@ public class VertxConfig {
 
     private static Logger LOGGER = LoggerFactory.getLogger(VertxConfig.class);
 
-    private static final String JVM_ARG_APP_CONFIG = "app-config";
-    private static final String DEFAULT_CONFIG = "app-config.json";
-    private static final String VERTICLES_CONFIG = "verticles-config.json";
+    private static final String JVM_ARG_OVERRIDE_CONFIG = "override-config";
+    private static final String JVM_ARG_VERTICLES_CONFIG = "override-verticles-config";
+    private static final String DEFAULT_CONFIG = "default-config.json";
+    private static final String VERTICLES_CONFIG = "default-verticles-config.json";
 
+    private JsonObject config;
     private JsonObject appConfig;
     private JsonObject verticlesConfig;
     private static VertxConfig singleton;
@@ -38,13 +41,32 @@ public class VertxConfig {
         return singleton;
     }
 
+    /**
+     * Vert.x -config argument. This will override default-config.json
+     * @param config
+     * @return
+     */
+    public VertxConfig config(JsonObject config) {
+        Objects.requireNonNull(config, "config must not be null");
+        this.config = config;
+        return this;
+    }
+
+    /**
+     * Get the config. If not done, this will load merging override config over vert.x -conf and over default-config.json
+     * @return
+     */
     public JsonObject appConfig() {
         if (appConfig == null || appConfig.isEmpty()) {
-            loadAppConfig();
+            loadConfig();
         }
         return appConfig;
     }
 
+    /**
+     * Get the default-verticles-config.json
+     * @return
+     */
     public JsonObject verticlesConfig() {
         if (verticlesConfig == null || verticlesConfig.isEmpty()) {
             loadVerticlesConfig();
@@ -52,45 +74,67 @@ public class VertxConfig {
         return verticlesConfig;
     }
 
-    public VertxConfig loadBeneathAppConfig(JsonObject config) {
-        if (config == null || config.isEmpty()) {
-            LOGGER.warn("failed loading appConfig beneath current one : config={}", config);
-            return this;
+    public VertxConfig loadConfig() {
+        LOGGER.debug("loadConfig: overriding defaultConfig by vert.x -conf arg, then by system property config file");
+
+        JsonObject defaultConfig = loadFromFile(DEFAULT_CONFIG);
+        JsonObject overrideConfig = loadConfig(JVM_ARG_OVERRIDE_CONFIG);
+        LOGGER.info("defaultConfig : {}", defaultConfig);
+        LOGGER.info("config : {}", config);
+        LOGGER.info("overrideConfig : {}", overrideConfig);
+
+        this.appConfig = defaultConfig;
+
+        if (defaultConfig != null && config != null) {
+            this.appConfig = defaultConfig.mergeIn(config, true);
+        }
+        if (appConfig != null && overrideConfig != null) {
+            this.appConfig = appConfig.mergeIn(overrideConfig, true);
+        }
+        if( appConfig == null) {
+            throw new RuntimeException("Could not load any Config");
         }
 
-        LOGGER.debug("loading appConfig beneath current one. appConfig from arg will be overridden. config={} appConfig={}", config, appConfig);
-        this.appConfig = config.mergeIn(appConfig());
-        LOGGER.info("merged appConfig : {}", appConfig);
+        LOGGER.info("merged all config : {}", appConfig);
         return this;
     }
 
-    private void loadAppConfig() {
-        LOGGER.info("loadAppConfig");
-        if (!loadConfig(JVM_ARG_APP_CONFIG)) {
-            appConfig = loadFromFile(DEFAULT_CONFIG);
+    private VertxConfig loadVerticlesConfig() {
+        LOGGER.info("loadVerticlesConfig : overriding defaultVerticlesConfig by system property config file");
+        JsonObject defaultVerticlesConfig = loadFromFile(VERTICLES_CONFIG);
+        JsonObject overrideVerticlesConfig = loadConfig(JVM_ARG_VERTICLES_CONFIG);
+
+        LOGGER.info("defaultVerticlesConfig : {}", defaultVerticlesConfig);
+        LOGGER.info("overrideVerticlesConfig : {}", overrideVerticlesConfig);
+
+        this.verticlesConfig = defaultVerticlesConfig;
+
+        if (defaultVerticlesConfig != null && overrideVerticlesConfig != null) {
+            this.verticlesConfig = defaultVerticlesConfig.mergeIn(overrideVerticlesConfig, true);
         }
+        if( verticlesConfig == null) {
+            throw new RuntimeException("Could not load any verticles Config");
+        }
+
+        LOGGER.info("merged all verticles config : {}", verticlesConfig);
+        return this;
     }
 
-    private void loadVerticlesConfig() {
-        LOGGER.info("loadVerticlesConfig");
-        verticlesConfig = loadFromFile(VERTICLES_CONFIG);
-    }
-
-    private boolean loadConfig(String propertyName) {
-        String configFile = System.getProperties().getProperty(propertyName);
+    private JsonObject loadConfig(String propertyName) {
+        String configFile = System.getProperty(propertyName);
         LOGGER.info("loadConfig propertyName={} configFile={}", propertyName, configFile);
 
         if (configFile != null) {
             try {
                 Path path = Paths.get(configFile);
                 String file = Files.toString(path.toFile(), Charset.defaultCharset());
-                appConfig = new JsonObject(file);
-                return true;
+                return new JsonObject(file);
             } catch (IOException e) {
                 LOGGER.error("Could not read the file {} --> using default configuration file from classpath", configFile, e.getMessage());
+                throw new RuntimeException(e);
             }
         }
-        return false;
+        return null;
     }
 
     private JsonObject loadFromFile(String fileName) {
@@ -99,7 +143,7 @@ public class VertxConfig {
             URL jsonFileUrl = Resources.getResource(fileName);
             return new JsonObject(Resources.toString(jsonFileUrl, Charsets.UTF_8));
         } catch (IOException e) {
-            LOGGER.error("Could not read the default appConfig file {}", e.getMessage());
+            LOGGER.error("Could not read the default defaultConfig file {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

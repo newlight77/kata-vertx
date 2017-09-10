@@ -1,0 +1,13 @@
+{
+  "http.port": 8080,
+
+  "vertxOptions": {
+    "clustered": false,
+    "clusterHost": "${nodeip}",
+    "quorumSize": 1,
+    "haEnabled": true,
+    "haGroup": "definition",
+    "eventLoopPoolSize": 4,
+    "workerPoolSize": 12
+  }
+}

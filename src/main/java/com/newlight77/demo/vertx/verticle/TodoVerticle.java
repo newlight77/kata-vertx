@@ -30,7 +30,7 @@ public class TodoVerticle extends AbstractVerticle {
             .createInjector(new BinderModule())
             .injectMembers(this);
 
-        JsonObject appConfig = VertxConfig.singleton().loadBeneathAppConfig(config()).appConfig();
+        JsonObject appConfig = VertxConfig.singleton().config(config()).appConfig();
 
         final Router router = todoRouter.route(vertx);
 

@@ -1,0 +1,15 @@
+{
+  "verticles" : [
+    {
+      "class" : "com.newlight77.demo.vertx.verticle.TodoVerticle",
+      "deploymentOptions": {
+        "config": {
+        },
+        "instances": 1,
+        "ha": true,
+        "worker": false,
+        "multiThreaded": false
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 plugins {
-    id 'java'
-    id 'application'
-    id 'com.github.johnrengelman.shadow' version '1.2.3'
+    id "java"
+    id "application"
+    id "com.github.johnrengelman.shadow" version "1.2.3"
 }
 
 repositories {
@@ -11,44 +11,47 @@ repositories {
     }
 }
 
-version = '1.0.0-SNAPSHOT'
-sourceCompatibility = '1.8'
-mainClassName = 'io.vertx.core.Launcher'
+version = "1.0.0-SNAPSHOT"
+sourceCompatibility = "1.8"
+mainClassName = "io.vertx.core.Launcher"
 
-def vertxVersion = '3.4.2'
-def mainVerticleName = 'com.newlight77.demo.vertx.VerticleLauncher'
-def watchForChange = 'src/**/*'
-def doOnChange = './gradlew classes'
+def vertxVersion = "3.4.2"
+def mainVerticleName = "com.newlight77.demo.vertx.VerticleLauncher"
+def watchForChange = "src/**/*"
+def doOnChange = "./gradlew classes"
 
 dependencies {
     compile group: "io.vertx", name: "vertx-core", version: "$vertxVersion"
     compile group: "io.vertx", name: "vertx-web", version: "$vertxVersion"
     compile group: "io.vertx", name: "vertx-rx-java", version: "$vertxVersion"
+    compile group: "io.vertx", name: "vertx-hazelcast", version: "$vertxVersion"
+
     compile group: "io.reactivex.rxjava2", name: "rxjava", version: "2.0.1"
 
     compile group: "com.google.inject", name: "guice", version: "4.1.0"
     compile group: "org.slf4j", name: "slf4j-api", version: "1.7.25"
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    compile group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
+    compile group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
 
     compile group: "junit", name: "junit", version: "4.12"
     compile group: "io.vertx", name: "vertx-unit", version: "$vertxVersion"
 }
 
 shadowJar {
-    classifier = 'fat'
+    classifier = "fat"
     manifest {
-        attributes 'Main-Verticle': 'io.vertx.example.HelloWorldVerticle'
+        attributes "Main-Verticle": "com.newlight77.demo.vertx.VerticleLauncher"
     }
     mergeServiceFiles {
-        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+        include "META-INF/services/io.vertx.core.spi.VerticleFactory"
     }
 }
 
 
 run {
-    args = ['run', mainVerticleName,
-            "-conf=src/main/resources/app-config.json",
+    args = ["run", mainVerticleName,
+            "-cluster",
+            "-conf=conf/config.json",
             "--launcher-class=$mainClassName",
             "--on-redeploy=$doOnChange",
             "--redeploy=$watchForChange",
@@ -58,14 +61,13 @@ run {
 }
 
 applicationDefaultJvmArgs = [
-//  '-Dnodeip=127.0.0.1',
-//  '-Dcluster-xml=conf/cluster.xml' // if Vert.x is clustered, Than cluster-xml JVM arg must be provided
-//  '-Dconf=conf/config.json',       // applicaton config file checkout below
-//  '-Djava.util.logging.config.file=:etc/log4j.properties',
-"-Dlogback.configurationFile=src/main/resources/logback.xml",
-"-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory"
+  "-Dnodeip=127.0.0.1",
+  "-Doverride-config=conf/override-config.json",
+  "-Doverride-verticles-config=conf/override-verticles-config.json",
+  "-Dlogback.configurationFile=src/main/resources/logback.xml",
+  "-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory"
 ]
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = "4.1"
 }
