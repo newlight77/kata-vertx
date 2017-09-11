@@ -30,8 +30,7 @@ public class Deployer {
 
     private static Deployer singleton;
 
-    private Deployer() {
-    }
+    private Deployer() {}
 
     public static Deployer singleton() {
         if (singleton == null) {
@@ -43,7 +42,7 @@ public class Deployer {
     public void deploy(VertxOptions vertxOptions, JsonArray verticlesConfig) {
 
         LOGGER.info("deploying verticles");
-        new VertxFactory()
+        VertxFactory
             .create(vertxOptions)
             .flatMapObservable(vertx -> deployVerticles(vertx, verticlesConfig))
             .subscribe(logSuccess, logError);
@@ -52,7 +51,7 @@ public class Deployer {
     private Observable<String> deployVerticles(Vertx vertx, JsonArray verticlesConfig) {
         return Observable
             .fromIterable(verticlesConfig)
-            .flatMap(verticleConf -> deployVerticle(vertx, (JsonObject) verticleConf));
+            .flatMap(verticleConf -> deployVerticle(vertx, (JsonObject)verticleConf));
     }
 
     private Observable<String> deployVerticle(Vertx vertx, JsonObject verticleConf) {
@@ -69,9 +68,11 @@ public class Deployer {
     }
 
     private void handleCompletion(Subscriber<? super String> observer, AsyncResult<String> result, String className) {
+        LOGGER.info("handleCompletion result={}", result);
         if (result.succeeded()) {
             observer.onNext("verticle=" + classShortName(className) + " : " + result.result());
         } else {
+            LOGGER.error("handleCompletion result={}", result.cause());
             observer.onError(result.cause());
         }
         observer.onComplete();

@@ -16,17 +16,22 @@ public class VerticleLauncher extends AbstractVerticle {
     @Override
     public void start(Future<Void> future) {
 
-        JsonObject appConfig = VertxConfig.singleton().config(config()).appConfig();
+        launch();
+    }
+
+    public static void main(String[] args) {
+
+        new VerticleLauncher().launch();
+    }
+
+    private void launch() {
+
+        JsonObject appConfig = VertxConfig.singleton().appConfig();
         LOGGER.info("start");
         VertxOptions vertxOptions = new VertxOptions(appConfig.getJsonObject("vertxOptions"));
         JsonArray verticlesConfig = (JsonArray) VertxConfig.singleton().verticlesConfig().getValue("verticles");
 
         Deployer.singleton().deploy(vertxOptions, verticlesConfig);
-
-    }
-
-    public static void main(String[] args) {
-        new VerticleLauncher().start(Future.future());
     }
 
 }

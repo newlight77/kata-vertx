@@ -13,7 +13,8 @@ repositories {
 
 version = "1.0.0-SNAPSHOT"
 sourceCompatibility = "1.8"
-mainClassName = "io.vertx.core.Launcher"
+//mainClassName = "io.vertx.core.Launcher"
+mainClassName = "com.newlight77.demo.vertx.VerticleLauncher"
 
 def vertxVersion = "3.4.2"
 def mainVerticleName = "com.newlight77.demo.vertx.VerticleLauncher"
@@ -51,6 +52,7 @@ shadowJar {
 run {
     args = ["run", mainVerticleName,
             "-cluster",
+            "cluster-xml=conf/cluster.xml",
             "-conf=conf/config.json",
             "--launcher-class=$mainClassName",
             "--on-redeploy=$doOnChange",
@@ -61,11 +63,12 @@ run {
 }
 
 applicationDefaultJvmArgs = [
-  "-Dnodeip=127.0.0.1",
+  "-Dcluster-xml=conf/cluster.xml",
   "-Doverride-config=conf/override-config.json",
   "-Doverride-verticles-config=conf/override-verticles-config.json",
   "-Dlogback.configurationFile=src/main/resources/logback.xml",
-  "-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory"
+  "-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory",
+  "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=4000"
 ]
 
 task wrapper(type: Wrapper) {
