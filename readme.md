@@ -40,6 +40,31 @@ java -jar build/libs/vertx-demo-1.0.0-SNAPSHOT-fat.jar
 Go to the http://localhost:8082/todos
 
 
+### Configuration
+
+Default configuration below :
+
+```
+{
+  "http.port": 8082,
+
+  "vertxOptions": {
+    "clustered": true,
+    "clusterHost": "127.0.0.1",
+    "quorumSize": 1,
+    "haEnabled": true,
+    "haGroup": "todos",
+    "eventLoopPoolSize": 4,
+    "workerPoolSize": 4
+  }
+}
+
+```
+
+
+You can override that configuration by throwing in the override-config property.
+
+
 ### More verticles
 
 To embbed more verticles :

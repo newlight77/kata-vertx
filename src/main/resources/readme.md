@@ -10,6 +10,7 @@ Please refer to documentation for other options which are extraClasspath, isolat
 
 
 ## vertxOptions
+
 * clustered -> If this field is true than vertx will run clustered so cluster.xml must provide
 * clusterHost -> cluster host name, (OPTIONAL you can pass things like this"${nodeip}")
 * quorumSize -> Untill quorum size satisfied verticle is not gonna be deployed
