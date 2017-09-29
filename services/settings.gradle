@@ -1,0 +1,9 @@
+
+include 'greeting-services'
+include 'todo-services'
+
+
+//include ':services-api', ':services-api:greeting-services-api', ':services-api:todo-services-api'
+//project(':services-api').projectDir                       = new File(settingsDir, '../services-api')
+//project(':services-api:greeting-services-api').projectDir = new File(settingsDir, '../services-api/greeting-services-api')
+//project(':services-api:todo-services-api').projectDir     = new File(settingsDir, '../services-api/todo-services-api')

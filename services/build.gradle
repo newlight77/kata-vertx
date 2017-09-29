@@ -1,0 +1,20 @@
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+    version = '1.0'
+}
+
+//evaluationDependsOn(':services-api')
+
+dependencies {
+//    compile project(":services:greeting-services")
+//    compile project(":services:todo-services")
+
+//    compile project(":services-api:greeting-services-api")
+//    compile project(":services-api:todo-services-api")
+}

@@ -1,6 +1,23 @@
-if (!JavaVersion.current().java8Compatible) {
-  throw new IllegalStateException('''A Haiku:
-                                    |  This needs Java 8,
-                                    |  You are using something else,
-                                    |  Refresh. Try again.'''.stripMargin())
-}
+include ':entities', ":entities:greeting-entities", "entities:todo-entities"
+project(':entities').projectDir = new File(settingsDir, 'entities')
+project(':entities:greeting-entities').projectDir = new File(settingsDir, 'entities/greeting-entities')
+project(':entities:todo-entities').projectDir     = new File(settingsDir, 'entities/todo-entities')
+
+include ':services-api', ':services-api:greeting-services-api', ':services-api:todo-services-api'
+project(':services-api').projectDir                       = new File(settingsDir, 'services-api')
+project(':services-api:greeting-services-api').projectDir = new File(settingsDir, 'services-api/greeting-services-api')
+project(':services-api:todo-services-api').projectDir     = new File(settingsDir, 'services-api/todo-services-api')
+
+include ':services', ':services:greeting-services', ':services:todo-services'
+project(':services').projectDir = new File(settingsDir, 'services')
+project(':services:greeting-services').projectDir = new File(settingsDir, 'services/greeting-services')
+project(':services:todo-services').projectDir = new File(settingsDir, 'services/todo-services')
+
+include ':verticles', ':verticles:greeting-consumer', ':verticles:greeting-processor', ':verticles:todo-consumer', ':verticles:todo-processor'
+project(':verticles').projectDir = new File(settingsDir, 'verticles')
+project(':verticles:greeting-consumer').projectDir = new File(settingsDir, 'verticles/greeting-consumer')
+project(':verticles:greeting-processor').projectDir = new File(settingsDir, 'verticles/greeting-processor')
+project(':verticles:todo-consumer').projectDir = new File(settingsDir, 'verticles/todo-consumer')
+project(':verticles:todo-processor').projectDir = new File(settingsDir, 'verticles/todo-processor')
+
+rootProject.name = 'vertx-demo'
