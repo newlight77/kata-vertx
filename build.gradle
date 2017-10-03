@@ -1,3 +1,8 @@
+plugins {
+    id "java"
+    id "application"
+//    id "com.github.johnrengelman.shadow" version "1.2.3"
+}
 
 allprojects {
     repositories {
@@ -5,13 +10,65 @@ allprojects {
     }
 }
 
+version = "1.0.0"
+
 subprojects {
-    version = '1.0'
+    version = version
 }
+
+
+mainClassName = "io.vertx.core.Launcher"
+
+def mainVerticleName = "com.newlight77.demo.vertx.VerticleLauncher"
+def watchForChange = "src/**/*"
+def doOnChange = "./gradlew classes"
+
 
 dependencies {
     project(":entities")
     project(":services-api")
     project(":services")
     project(":verticles")
+    project(":vertx-launcher")
+
+    runtime project(":vertx-launcher")
+}
+
+
+run {
+    args = ["run",
+            mainVerticleName,
+            "-cluster",
+            "cluster-xml=conf/cluster.xml",
+            "--launcher-class=$mainClassName",
+            "--on-redeploy=$doOnChange",
+            "--redeploy=$watchForChange",
+            "--java-opts", // when using --redeploy, --java-opts is required for debug
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=4000"
+    ]
+}
+
+//mainClassName = "com.newlight77.demo.vertx.VerticleLauncher"
+
+//shadowJar {
+//    classifier = "fat"
+//    manifest {
+//        attributes "Main-Verticle": "com.newlight77.demo.vertx.VerticleLauncher"
+//    }
+//    mergeServiceFiles {
+//        include "META-INF/services/io.vertx.core.spi.VerticleFactory"
+//    }
+//}
+
+//applicationDefaultJvmArgs = [
+//    "-Dcluster-xml=conf/cluster.xml",
+//    "-Doverride-config=conf/override-config.json",
+//    "-Doverride-verticles-config=conf/override-verticles-config.json",
+//    "-Dlogback.configurationFile=src/main/resources/logback.xml",
+//    "-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory",
+//    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=4000"
+//]
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "4.1"
 }

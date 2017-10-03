@@ -20,4 +20,7 @@ project(':verticles:greeting-processor').projectDir = new File(settingsDir, 'ver
 project(':verticles:todo-consumer').projectDir = new File(settingsDir, 'verticles/todo-consumer')
 project(':verticles:todo-processor').projectDir = new File(settingsDir, 'verticles/todo-processor')
 
+include ':vertx-launcher'
+project(':vertx-launcher').projectDir = new File(settingsDir, 'vertx-launcher')
+
 rootProject.name = 'vertx-demo'

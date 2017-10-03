@@ -10,6 +10,17 @@
         "worker": false,
         "multiThreaded": false
       }
+    },
+    {
+      "class" : "com.newlight77.demo.vertx.verticle.TodoConsumerVerticle",
+      "deploymentOptions": {
+        "config": {
+        },
+        "instances": 1,
+        "ha": true,
+        "worker": false,
+        "multiThreaded": false
+      }
     }
   ]
 }
