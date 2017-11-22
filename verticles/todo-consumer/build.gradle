@@ -12,6 +12,9 @@ dependencies {
   compile group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
   compile group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
 
+  compile group: "com.google.inject", name: "guice", version: "4.1.0"
+
+  compile project(':services:todo-services')
   compile project(':services-api:todo-services-api')
 
 }

@@ -1,9 +1,8 @@
 package com.newlight77.demo.vertx.handler;
 
+import com.google.inject.Inject;
 import com.newlight77.demo.vertx.service.TodoService;
 
-import io.vertx.core.Vertx;
-import io.vertx.serviceproxy.ProxyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +15,8 @@ public class TodoHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TodoHandler.class);
 
+    @Inject
     private TodoService service;
-
-    public TodoHandler(Vertx vertx) {
-        service = ProxyHelper.createProxy(TodoService.class, vertx, "vertx.todoService");
-    }
 
     public void handleCreateTodo(RoutingContext routingContext) {
         LOGGER.info("handleCreateTodo with uri={}", routingContext.request().absoluteURI());

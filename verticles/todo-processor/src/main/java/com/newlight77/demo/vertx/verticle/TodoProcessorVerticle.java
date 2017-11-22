@@ -6,7 +6,6 @@ import com.newlight77.demo.vertx.service.TodoService;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.serviceproxy.ProxyHelper;
 
 import javax.inject.Inject;
 
@@ -19,10 +18,8 @@ public class TodoProcessorVerticle extends AbstractVerticle {
     public void start(Future<Void> future) throws Exception {
 
         Guice
-            .createInjector(new BinderModule())
+            .createInjector(new BinderModule(vertx))
             .injectMembers(this);
-
-        ProxyHelper.registerService(TodoService.class, vertx, service, "vertx.todoService");
 
     }
 }

@@ -1,5 +1,6 @@
 package com.newlight77.demo.vertx.router;
 
+import com.google.inject.Inject;
 import com.newlight77.demo.vertx.handler.TodoHandler;
 
 import org.slf4j.Logger;
@@ -13,12 +14,13 @@ public class TodoRouter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TodoRouter.class);
 
+    @Inject
     private TodoHandler todoHandler;
     private Vertx vertx;
 
     public TodoRouter(Vertx vertx) {
         this.vertx = vertx;
-        this.todoHandler = new TodoHandler(vertx);
+        this.todoHandler = new TodoHandler();
     }
 
     public Router route() {

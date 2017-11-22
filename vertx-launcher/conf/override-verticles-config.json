@@ -1,7 +1,7 @@
 {
   "verticles" : [
     {
-      "class" : "com.newlight77.demo.vertx.verticle.TodoVerticle",
+      "class" : "com.newlight77.demo.vertx.verticle.TodoConsumerVerticle",
       "deploymentOptions": {
         "config": {
         },
@@ -12,7 +12,7 @@
       }
     },
     {
-      "class" : "com.newlight77.demo.vertx.verticle.TodoConsumerVerticle",
+      "class" : "com.newlight77.demo.vertx.verticle.TodoProcessorVerticle",
       "deploymentOptions": {
         "config": {
         },

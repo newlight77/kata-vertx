@@ -23,6 +23,9 @@ hs_err_pid*
 ### Gradle template
 .gradle
 /build/
+gradle
+gradlew
+gradlew.bat
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -40,9 +43,11 @@ gradle-app.setting
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
+.idea
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+*.iml
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -67,6 +72,8 @@ gradle-app.setting
 
 # IntelliJ
 /out/
+.idea
+*.iml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

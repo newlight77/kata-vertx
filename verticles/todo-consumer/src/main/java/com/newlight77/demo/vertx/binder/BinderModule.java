@@ -1,6 +1,7 @@
 package com.newlight77.demo.vertx.binder;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.newlight77.demo.vertx.service.TodoService;
 import com.newlight77.demo.vertx.service.TodoServiceImp;
 import io.vertx.core.Vertx;
@@ -15,9 +16,9 @@ public class BinderModule extends AbstractModule {
 
     @Override
     protected void configure() {
+//        TodoService todoService = ProxyHelper.createProxy(TodoService.class, vertx, "vertx.todoService");
+//        bind(TodoService.class).toInstance(todoService);
         TodoService todoService = new TodoServiceImp();
         bind(TodoService.class).to(TodoServiceImp.class);
-
-//        ProxyHelper.registerService(TodoService.class, vertx, todoService, "vertx.todoService");
     }
 }

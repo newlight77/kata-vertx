@@ -29,11 +29,11 @@ dependencies {
     project(":services-api")
     project(":services")
     project(":verticles")
-    project(":vertx-launcher")
 
+    runtime project(":verticles:todo-consumer")
+    runtime project(":verticles:todo-processor")
     runtime project(":vertx-launcher")
 }
-
 
 run {
     args = ["run",
